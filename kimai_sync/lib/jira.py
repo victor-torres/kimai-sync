@@ -45,3 +45,55 @@ class Jira:
             for issue in response.json()["issues"]
         ]
         return issues
+
+    def get_issues_from_board(self) -> list[Issue]:
+        jql_query = f"project = {self._settings.jira_project_id}"
+        payload = {
+            "jql": jql_query,
+            "maxResults": 100,
+            "fields": ["issuetype", "summary"],
+        }
+
+        response = httpx.post(
+            f"{self._settings.jira_url}/rest/api/3/search",
+            headers=self._headers,
+            auth=self._auth,
+            json=payload,
+        )
+        response.raise_for_status()
+
+        issues = [
+            Issue(
+                key=issue["key"],
+                type=issue["fields"]["issuetype"]["name"],
+                summary=issue["fields"]["summary"],
+            )
+            for issue in response.json()["issues"]
+        ]
+        return issues
+
+    def get_issues_by_status(self, status: str) -> list[Issue]:
+        jql_query = f"project = {self._settings.jira_project_id} AND status = {status!r}"
+        payload = {
+            "jql": jql_query,
+            "maxResults": 100,
+            "fields": ["issuetype", "summary"],
+        }
+
+        response = httpx.post(
+            f"{self._settings.jira_url}/rest/api/3/search",
+            headers=self._headers,
+            auth=self._auth,
+            json=payload,
+        )
+        response.raise_for_status()
+
+        issues = [
+            Issue(
+                key=issue["key"],
+                type=issue["fields"]["issuetype"]["name"],
+                summary=issue["fields"]["summary"],
+            )
+            for issue in response.json()["issues"]
+        ]
+        return issues
