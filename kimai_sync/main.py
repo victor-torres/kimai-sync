@@ -15,6 +15,20 @@ def get_jira_issues_by_sprint(sprint: str):
     for issue in issues:
         print(f"{issue.type_emoji} {issue.key}: {issue.summary}")
 
+@app.command()
+def get_jira_issues_from_board():
+    jira = Jira(settings=settings)
+    issues = jira.get_issues_from_board()
+    for issue in issues:
+        print(f"{issue.type_emoji} {issue.key}: {issue.summary}")
+
+@app.command()
+def get_jira_issues_by_status(status: str):
+    jira = Jira(settings=settings)
+    issues = jira.get_issues_by_status(status)
+    for issue in issues:
+        print(f"{issue.type_emoji} {issue.key}: {issue.summary}")
+
 
 @app.command()
 def get_kimai_activities(**kwargs):
